@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+
+
+""" 
+    https://adventofcode.com/2020/day/7
+    Luggage identified by color can contain varing amounts of other bags of color.
+    You have a gold bag and you need to list out the number of bags that can contain your bag.
+
+    example input: 
+
+    light red bags contain 1 bright white bag, 2 muted yellow bags.
+    dark orange bags contain 3 bright white bags, 4 muted yellow bags.
+    bright white bags contain 1 shiny gold bag.
+    
+"""
+
+import logging, sys
+from collections import defaultdict
+
+#logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+
+def parse_input_file(input) -> dict:
+    luggage = {}
+    with open(input) as f:
+        lines = [x.strip() for x in f.read().split('.') if x != "\n"]
+    for line in lines:
+            logging.debug(f'  {line}')
+            line = line.replace('bags', '').replace('bag', '').replace('no other', '0 color')
+            #line = line.replace('bags', 'bag').replace('no other', '0 color')
+            logging.debug(f'  {line}')
+            bag, bags = line.split(' contain ')
+            luggage[bag] = bags.split(' , ')
+
+    parsed_luggage = defaultdict(list)
+    luggage_graph = defaultdict(list)
+    
+    for key, value in luggage.items():
+        key = key.strip()
+        logging.debug(f'{key}-> {value}')
+        for item in value:
+            piece = item.split(" ", maxsplit=1)
+            logging.debug(f'{piece[1].strip()}:{piece[0].strip()} ')
+            parsed_luggage[key].append({piece[1].strip():piece[0].strip()})
+            luggage_graph[key].append(piece[1].strip())
+
+        
+    return parsed_luggage, dict(luggage_graph)
+
+
+def get_unique_bags(luggage: dict) -> list:
+    unique_bags = []
+    for bag, items in luggage.items():
+        unique_bags.append(bag)
+        logging.debug(f'   {bag} - {luggage[bag]}')
+        for item in items:
+            for slice in item:
+                logging.debug(f'   {bag} - {slice}')
+                unique_bags.append(slice.strip(' '))
+        
+    return set(unique_bags)    
+
+
+def get_gold_carriers(luggage: dict, start: str, end: str, path=[]) -> list:
+    if end == 'shiny gold':
+        print('bobobobobobobobobboboboboboboboboobobbofucketfucketfuktfutkfutkkfasdfasdfasfasdfas')
+    lcnt = '--'
+    logging.info(f'{lcnt}-{path}-{(start)}-{(end)}')
+    if start == 'shiny gold':
+        print('fucketfucketfuktfutkfutkkfasdfasdfasfasdfas')
+    path = path + [start] 
+    logging.info(f'{lcnt}-{path}-{(start)}-{(end)}')
+    if start.strip() == end.strip():
+        return path
+    if start not in luggage:
+        return None
+    for node in luggage[start]:
+        if node not in path:
+            newpath = get_gold_carriers(luggage, node, end, path)
+            if newpath: return newpath
+    return None
+
+
+if __name__ == '__main__':
+    parsed_luggage, luggage_graph = parse_input_file('puzzle_input_test')
+    for k,v in parsed_luggage.items():
+        logging.debug(f'{k}-{v}')
+    for k,v in luggage_graph.items():
+        logging.info(f'{k}-{v}')
+    #luggage = parse_input_file('puzzle_input')
+    gold_carriers = []
+    for bag in get_unique_bags(parsed_luggage):
+        logging.info(f'-{bag}-')
+        print(gold_carriers.append(get_gold_carriers(luggage_graph, bag, 'shiny gold')))
+    for bag in gold_carriers:
+        logging.debug(bag)
+
+    #for bag in get_gold_carriers(luggage_graph):
+        #logging.debug(f'  {bag}')
