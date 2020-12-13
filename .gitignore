@@ -1,3 +1,4 @@
 *.wip
 learn_go/*
 .idea/*
+scratch/*

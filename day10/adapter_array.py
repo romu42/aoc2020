@@ -67,6 +67,7 @@ def get_deltas_sum(lst: list):
             break
     logging.info(working_lst)
     logging.info(tbr)
+    logging.info(pow(2,len(tbr)))
     # perm = [x for x in permutations(tbr, len(tbr))]
     counter = len(tbr)
     comb = []
