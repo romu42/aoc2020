@@ -50,7 +50,7 @@ def clean_input_pt2(file) -> list:
             mask = [x for x in item.split(' = ')[1]]
             logging.debug(f'{item}')
         else:
-            logging.info(f'{item}')
+            logging.debug(f'{item}')
             mem = re.findall(r'\d+', item)
             input_value = int(mem[1])
             logging.info(mem[0])

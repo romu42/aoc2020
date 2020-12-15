@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
 
-from itertools import combinations
-from itertools import permutations
-from itertools import combinations_with_replacement
 from itertools import product
 import logging
 import sys
-from collections import defaultdict
 import re
 
 # logging.basicConfig(format='  %(message)s  ', stream=sys.stderr, level=logging.DEBUG)
