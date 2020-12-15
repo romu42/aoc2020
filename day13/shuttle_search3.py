@@ -37,12 +37,15 @@ def timestamp(bus_ids: list):
         if bus_id != 'x':
             modifier_table[int(bus_id)] = modifier
     logging.info(len(modifier_table))
-    time = (100000000000000 - (100000000000000 % bus1) % bus1 )
+    # time = (100000000000000 - (100000000000000 % bus1) % bus1)
+    time = 0
     magic_number = len(modifier_table)
-    big_bus = max(modifier_table, key=lambda x: modifier_table[x])
-    logging.info(f'the big_bus is {big_bus} with modifier {modifier_table[big_bus]}')
+    big_bus = [x for x in modifier_table.keys()]
+    logging.info(f'the big_bus is {max(big_bus)}')
+    stepper = max(big_bus) + modifier_table[max(big_bus)]
+    time = (100000000000000 - (100000000000000 % stepper) % stepper)
     while True:
-        time = time + bus1
+        time = time + stepper
         # time = time + big_bus - modifier_table[big_bus]
         counter = 0
         for bus_id, modifier in modifier_table.items():
@@ -61,7 +64,7 @@ if __name__ == '__main__':
     # working_lst = ['bob', '67,7,59,61']
     # working_lst = ['bob', '67,x,7,59,61']
     # working_lst = ['bob', '67,7,x,59,61']
-    # working_lst = ['bob', '1789,37,47,1889']
+    # working_lst = ['bob', '1789,37,47,1889,19']
     working_lst = ['bob', '41,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,37,x,x,x,x,x,911,x,x,x,x,x,x,x,x,x,x,x,x,13,17,x,x,x,x,x,x,x,x,23,x,x,x,x,x,29,x,827,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,19']
     # for row in working_lst:
     #     logging.info(row)

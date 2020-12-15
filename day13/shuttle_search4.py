@@ -3,6 +3,7 @@
 import logging
 import sys
 from collections import deque
+import math
 
 # logging.basicConfig(format='  %(message)s  ', stream=sys.stderr, level=logging.DEBUG)
 logging.basicConfig(format='  %(message)s  ', stream=sys.stderr, level=logging.INFO)
@@ -37,22 +38,29 @@ def timestamp(bus_ids: list):
         if bus_id != 'x':
             modifier_table[int(bus_id)] = modifier
     logging.info(len(modifier_table))
-    time = (100000000000000 - (100000000000000 % bus1) % bus1 )
+    # time = (100000000000000 - (100000000000000 % bus1) % bus1)
+    time = 0
     magic_number = len(modifier_table)
-    big_bus = max(modifier_table, key=lambda x: modifier_table[x])
-    logging.info(f'the big_bus is {big_bus} with modifier {modifier_table[big_bus]}')
-    while True:
-        time = time + bus1
-        # time = time + big_bus - modifier_table[big_bus]
-        counter = 0
-        for bus_id, modifier in modifier_table.items():
-            if (time + modifier) % bus_id == 0:
-                counter = counter + 1
-            else:
-                break
-        if counter == magic_number:
-            logging.info(f'the timestamp needed is {time}')
-            break
+    big_bus = [x for x in modifier_table.keys()]
+    logging.info(f'the big_bus is {max(big_bus)}')
+    stepper = max(big_bus) + modifier_table[big_bus:]
+    time = (100000000000000 - (100000000000000 % stepper) % stepper)
+    da_list = [x + y for x,y in modifier_table.items()]
+    logging.info((da_list))
+    # logging.info(math.gcd(da_list()))
+    # while True:
+    #     time = time + stepper
+    #     time = time + big_bus - modifier_table[big_bus]
+        # counter = 0
+        # for bus_id, modifier in modifier_table.items():
+        #     logging.info(f'rolling along here {time}')
+        #     if (time + modifier) % bus_id == 0:
+        #         counter = counter + 1
+        #     else:
+        #         break
+        # if counter == magic_number:
+        #     logging.info(f'the timestamp needed is {time}')
+        #     break
 
 if __name__ == '__main__':
     # working_lst = clean_input('puzzle_input_test')
@@ -61,7 +69,7 @@ if __name__ == '__main__':
     # working_lst = ['bob', '67,7,59,61']
     # working_lst = ['bob', '67,x,7,59,61']
     # working_lst = ['bob', '67,7,x,59,61']
-    # working_lst = ['bob', '1789,37,47,1889']
+    # working_lst = ['bob', '1789,37,47,1889,19']
     working_lst = ['bob', '41,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,37,x,x,x,x,x,911,x,x,x,x,x,x,x,x,x,x,x,x,13,17,x,x,x,x,x,x,x,x,23,x,x,x,x,x,29,x,827,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,19']
     # for row in working_lst:
     #     logging.info(row)
