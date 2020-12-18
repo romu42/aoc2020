@@ -21,7 +21,7 @@ def clean_input(file) -> list:
         return seating
 
 def create_seating_dict(lst: list) -> dict:
-    logging.debug(lst)
+    logging.info(lst)
     seating = defaultdict(dict)
     row = 0
     for seats in lst:
@@ -30,7 +30,9 @@ def create_seating_dict(lst: list) -> dict:
             seating[row][column] = seat
             column = column + 1
         row = row + 1
-    return seating
+    logging.debug(f'length {column}')
+    logging.debug(f' widht {row}')
+    return seating, column, row
 
 
 def print_seating_chart(seating_dict: dict):
@@ -53,11 +55,11 @@ def print_seating_chart(seating_dict: dict):
                 break
             row_seating.append(seating_dict[row][column])
             column = column + 1
-        logging.debug(f'{"".join(row_seating)}')
+        logging.info(f'{"".join(row_seating)}')
         row = row + 1
 
 
-def run_ruleset(seating_dict: dict) -> dict:
+def run_ruleset(seating_dict: dict, length = 0, width = 0) -> dict:
     occupied_seats = 0
     temp_seating_chart = copy.deepcopy(seating_dict)
     row = 0
@@ -77,7 +79,11 @@ def run_ruleset(seating_dict: dict) -> dict:
                 next
             elif column == num_seats - 1:
                 break
-            temp_seating_chart[row][column] = check_adjacent_seats(seating_dict, seating_dict[row][column], row, column)
+            if length == 0 and width == 0:
+                temp_seating_chart[row][column] = check_adjacent_seats(seating_dict, seating_dict[row][column], row, column)
+            else:
+                temp_seating_chart[row][column] = check_seats(seating_dict, seating_dict[row[column], row, column, length, width])
+
             if temp_seating_chart[row][column] == '#':
                 occupied_seats = occupied_seats + 1
             column = column + 1
@@ -103,18 +109,38 @@ def check_adjacent_seats(seating_dict: dict, seat: str, row: int, column: int) -
         return seating_dict[row][column]
 
 
+def check_seats(seating_dict: dict, seat: str, row: int, column: int, length: int, width:int) -> str:
+    adjacent_seats = []
+    # SW
+    adjacent_seats.append(seating_dict[row - 1][column - 1])
+    # W
+    adjacent_seats.append(seating_dict[row - 1][column])
+    # NW
+    adjacent_seats.append(seating_dict[row - 1][column + 1])
+    # S
+    adjacent_seats.append(seating_dict[row][column - 1])
+    adjacent_seats.append(seating_dict[row][column + 1])
+    adjacent_seats.append(seating_dict[row + 1][column - 1])
+    adjacent_seats.append(seating_dict[row + 1][column])
+    adjacent_seats.append(seating_dict[row + 1][column + 1])
+    if seating_dict[row][column] == 'L' and '#' not in adjacent_seats:
+        return '#'
+    elif seating_dict[row][column] == '#' and adjacent_seats.count('#') > 3:
+        return 'L'
+    else:
+        return seating_dict[row][column]
 if __name__ == '__main__':
-    # working_lst = clean_input('puzzle_input_test')
-    working_lst = clean_input('puzzle_input')
-    ferry_seating = (create_seating_dict(working_lst))
+    working_lst = clean_input('puzzle_input_test')
+    # working_lst = clean_input('puzzle_input')
+    ferry_seating, rows, columns = (create_seating_dict(working_lst))
     # print_seating_chart(ferry_seating)
-    logging.debug(f'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    # logging.info(f'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     ferry_seating, status, num_seats_occupied = run_ruleset(ferry_seating)
-    logging.debug(f'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    logging.debug(f'number of seats occupied after last run: {num_seats_occupied}')
+    # logging.info(f'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    # logging.info(f'number of seats occupied after last run: {num_seats_occupied}')
     # print_seating_chart(ferry_seating)
     while not status:
         ferry_seating, status, num_seats_occupied = run_ruleset(ferry_seating)
-        logging.debug(f'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        # print_seating_chart(ferry_seating)
+        logging.info(f'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print_seating_chart(ferry_seating)
     logging.info(f'number of seats occupied after last run: {num_seats_occupied}')
